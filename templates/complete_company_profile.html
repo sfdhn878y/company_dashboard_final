@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Company Profile</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(120deg, #020617, #0f172a);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #e2e8f0;
+        }
+
+        .box {
+            width: 450px;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 25px rgba(0,0,0,0.6);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #38bdf8;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 90px;
+            resize: none;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            background: #38bdf8;
+            border: none;
+            border-radius: 6px;
+            color: #020617;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>Complete Company Profile</h2>
+
+    <form  action="/complete-company-profile" method="POST">
+
+        <input type="text" name="company_name" placeholder="Company Name">
+
+        <input type="text" name="industry" placeholder="Industry">
+
+        <input type="text" name="website" placeholder="Website">
+
+        <input type="text" name="location" placeholder="Location">
+
+        <input type="text" name="company_size" placeholder="Company Size">
+
+        <textarea name="description" placeholder="Company Description"></textarea>
+
+        <button type="submit">Save Profile</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

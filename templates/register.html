@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(120deg, #020617, #0f172a);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #e2e8f0;
+        }
+
+        .box {
+            width: 380px;
+            padding: 35px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 25px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #38bdf8;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            color: white;
+            font-size: 15px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+
+        select option {
+            background: #020617;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            background: #38bdf8;
+            border: none;
+            border-radius: 6px;
+            color: #020617;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+            transform: scale(1.03);
+        }
+
+        a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        p {
+            margin-top: 20px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Create Account</h2>
+
+    <form method="POST" action="/register">
+        <input type="text" name="name" placeholder="Full Name" required>
+
+        <input type="email" name="email" placeholder="Email" required>
+
+        <input type="password" name="password" placeholder="Password" required>
+
+        <select name="role" required>
+            <option value="">Select Role</option>
+            <option value="student">Student</option>
+            <option value="company">Company</option>
+        </select>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p>
+        Already have account? <a href="/login">Login</a>
+    </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Job</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(120deg,#020617,#0f172a);
+            color: white;
+        }
+
+        .box {
+            width: 400px;
+            margin: 60px auto;
+            padding: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #38bdf8;
+            border: none;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>Post New Job</h2>
+
+    <form method="POST">
+        <input type="text" name="title" placeholder="Job Title" required>
+
+        <input type="text" name="skills" placeholder="Required Skills" required>
+
+        <input type="text" name="experience" placeholder="Experience Required">
+
+        <input type="text" name="salary" placeholder="Salary">
+
+        <textarea name="description" placeholder="Job Description"></textarea>
+
+        <button type="submit">Post Job</button>
+    </form>
+</div>
+
+</body>
+</html>

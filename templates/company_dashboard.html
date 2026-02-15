@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Company Dashboard</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(120deg, #020617, #0f172a);
+    min-height: 100vh;
+    color: #e2e8f0;
+}
+
+/* NAVBAR */
+.navbar {
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid #1e293b;
+    backdrop-filter: blur(10px);
+    padding: 18px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h2 {
+    color: #38bdf8;
+    margin: 0;
+}
+
+/* CONTAINER */
+.container {
+    padding: 50px;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* CARD STYLE */
+.card {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    padding: 35px;
+    margin-bottom: 30px;
+}
+
+.card h3 {
+    color: #38bdf8;
+    margin-bottom: 20px;
+}
+
+/* TEXT */
+.card p {
+    margin: 10px 0;
+    color: #cbd5e1;
+}
+
+/* BUTTONS */
+.btn {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.complete {
+    background: #38bdf8;
+    color: #020617;
+}
+
+.complete:hover {
+    background: #0ea5e9;
+    transform: scale(1.05);
+}
+
+.logout {
+    background: #ef4444;
+    color: white;
+}
+
+.logout:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+.incomplete {
+    color: #ef4444;
+    font-weight: bold;
+}
+
+.section-title {
+    color: #38bdf8;
+    margin-bottom: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>Company Dashboard</h2>
+    <a href="/logout">
+        <button class="btn logout">Logout</button>
+    </a>
+</div>
+
+<div class="container">
+
+    <!-- COMPANY PROFILE -->
+    <div class="card">
+        <h3>Company Profile</h3>
+
+        {% if company.company_name %}
+            <p><b>Name:</b> {{ company.company_name }}</p>
+            <p><b>Industry:</b> {{ company.industry }}</p>
+            <p><b>Website:</b> {{ company.website }}</p>
+            <p><b>Location:</b> {{ company.location }}</p>
+            <p><b>Size:</b> {{ company.company_size }}</p>
+            <p><b>Description:</b> {{ company.description }}</p>
+        {% else %}
+            <p class="incomplete">⚠ Profile Incomplete</p>
+        {% endif %}
+
+        <br>
+
+        <a href="/complete-company-profile">
+            <button class="btn complete">Complete / Edit Profile</button>
+        </a>
+    </div>
+
+
+    <!-- JOB POSTS -->
+    <h2 class="section-title">Your Job Posts</h2>
+
+    <a href="/post-job">
+        <button class="btn complete">Post New Job</button>
+    </a>
+
+    <br><br>
+
+    {% for job in jobs %}
+    <div class="card">
+        <p><b>Title:</b> {{ job.title }}</p>
+        <p><b>Skills:</b> {{ job.skills }}</p>
+        <p><b>Salary:</b> {{ job.salary }}</p>
+
+        <p><b>Approved:</b>
+            {% if job.is_approved %}
+                ✅ Approved
+            {% else %}
+                ⏳ Pending
+            {% endif %}
+        </p>
+
+        <p><b>Status:</b>
+            {% if job.is_closed %}
+                🔴 Closed
+            {% else %}
+                🟢 Open
+            {% endif %}
+        </p>
+    </div>
+    {% endfor %}
+
+
+</div>
+
+</body>
+</html>
