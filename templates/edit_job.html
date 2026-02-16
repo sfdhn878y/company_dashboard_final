@@ -1,0 +1,17 @@
+<div class="box">
+    <h2>Edit Job</h2>
+
+    <form method="POST">
+        <input type="text" name="title" value="{{ job.title }}" required>
+
+        <input type="text" name="skills" value="{{ job.skills }}" required>
+
+        <input type="text" name="experience" value="{{ job.experience }}">
+
+        <input type="text" name="salary" value="{{ job.salary }}">
+
+        <textarea name="description">{{ job.description }}</textarea>
+
+        <button type="submit">Update Job</button>
+    </form>
+</div>

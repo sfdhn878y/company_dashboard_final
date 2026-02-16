@@ -65,12 +65,13 @@ body {
 
 /* BUTTONS */
 .btn {
-    padding: 12px 18px;
+    padding: 10px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
     transition: 0.3s;
+    margin-right: 10px;
 }
 
 .complete {
@@ -107,6 +108,7 @@ body {
 
 <body>
 
+<!-- NAVBAR -->
 <div class="navbar">
     <h2>Company Dashboard</h2>
     <a href="/logout">
@@ -149,29 +151,26 @@ body {
     <br><br>
 
     {% for job in jobs %}
-    <div class="card">
-        <p><b>Title:</b> {{ job.title }}</p>
-        <p><b>Skills:</b> {{ job.skills }}</p>
-        <p><b>Salary:</b> {{ job.salary }}</p>
+        <div class="card">
+            <p><b>Title:</b> {{ job.title }}</p>
+            <p><b>Skills:</b> {{ job.skills }}</p>
+            <p><b>Experience:</b> {{ job.experience }}</p>
+            <p><b>Salary:</b> {{ job.salary }}</p>
+            <p><b>Status:</b> {{ job.status }}</p>
 
-        <p><b>Approved:</b>
-            {% if job.is_approved %}
-                ✅ Approved
-            {% else %}
-                ⏳ Pending
-            {% endif %}
-        </p>
+            <br>
 
-        <p><b>Status:</b>
-            {% if job.is_closed %}
-                🔴 Closed
-            {% else %}
-                🟢 Open
-            {% endif %}
-        </p>
-    </div>
+            <!-- EDIT BUTTON -->
+            <a href="/edit-job/{{ job.id }}">
+                <button class="btn complete">Edit</button>
+            </a>
+
+            <!-- DELETE BUTTON -->
+            <a href="/delete-job/{{ job.id }}">
+                <button class="btn logout">Delete</button>
+            </a>
+        </div>
     {% endfor %}
-
 
 </div>
 

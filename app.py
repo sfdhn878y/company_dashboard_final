@@ -258,7 +258,7 @@ def post_job():
             title=request.form["title"],
             skills=request.form["skills"],
             salary=request.form["salary"],
-            
+
         )
 
         db.session.add(job)
@@ -268,7 +268,30 @@ def post_job():
 
     return render_template("post_job.html")
 
+@app.route("/delete-job/<int:id>")
+def delete_job(id):
+    job = Job.query.get_or_404(id)
 
+    db.session.delete(job)
+    db.session.commit()
+
+    return redirect("/company_dashboard")
+
+@app.route("/edit-job/<int:id>", methods=["GET", "POST"])
+def edit_job(id):
+    job = Job.query.get_or_404(id)
+
+    if request.method == "POST":
+        job.title = request.form["title"]
+        job.skills = request.form["skills"]
+        job.experience = request.form["experience"]
+        job.salary = request.form["salary"]
+        job.description = request.form["description"]
+
+        db.session.commit()
+        return redirect("/company_dashboard")
+
+    return render_template("edit_job.html", job=job)
 
 
 @app.route("/complete-company-profile", methods=["GET", "POST"])
@@ -309,19 +332,6 @@ def complete_company_profile():
         return redirect("/company_dashboard")
 
     return render_template("complete_company_profile.html", company=company)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route("/admin_dashboard")
