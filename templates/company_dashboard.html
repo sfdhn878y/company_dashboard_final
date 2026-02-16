@@ -156,7 +156,15 @@ body {
             <p><b>Skills:</b> {{ job.skills }}</p>
             <p><b>Experience:</b> {{ job.experience }}</p>
             <p><b>Salary:</b> {{ job.salary }}</p>
-            <p><b>Status:</b> {{ job.status }}</p>
+            
+            <p>
+                <b>Status:</b> 
+                {% if job.is_approved == 0 %}
+                    <span style="color: orange;">Pending to be approved by admin</span>
+                {% else %}
+                    <span style="color: lightgreen;">Approved</span>
+                {% endif %}
+            </p>
 
             <br>
 

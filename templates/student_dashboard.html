@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(120deg, #020617, #0f172a);
+            color: white;
+        }
+
+        .container {
+            width: 800px;
+            margin: 50px auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background: #38bdf8;
+            border: none;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .incomplete {
+            color: orange;
+        }
+
+        .apply {
+            background: #22c55e;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- PROFILE SECTION -->
+        <div class="card">
+            <h2>Student Profile</h2>
+
+            {% if student %}
+            <p><b>Department:</b> {{ student.department }}</p>
+            <p><b>CGPA:</b> {{ student.cgpa }}</p>
+            <p><b>Resume:</b> {{ student.resume }}</p>
+            {% else %}
+            <p class="incomplete">⚠ Profile Incomplete</p>
+            {% endif %}
+
+            <br>
+
+            <a href="/complete-student-profile">
+                <button class="btn">Complete / Edit Profile</button>
+            </a>
+        </div>
+
+
+        <!-- JOBS SECTION -->
+        <h2>Available Jobs</h2>
+{% for job in jobs %}
+<div class="card">
+
+    <p><b>Company:</b> {{ job.company.company_name }}</p>
+    <p><b>Title:</b> {{ job.title }}</p>
+    <p><b>Skills:</b> {{ job.skills }}</p>
+    <p><b>Salary:</b> {{ job.salary }}</p>
+
+    {% if job.id in applied_job_ids %}
+        <button class="btn" style="background: gray; cursor: not-allowed;">
+            Applied ✓
+        </button>
+    {% else %}
+        <a href="/apply-job/{{ job.id }}">
+            <button class="btn apply">Apply Job</button>
+        </a>
+    {% endif %}
+
+</div>
+{% endfor %}
+
+
+    </div>
+
+</body>
+
+</html>

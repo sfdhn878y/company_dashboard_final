@@ -221,9 +221,10 @@ def login():
             return redirect('company_dashboard')
 
         else:
-            return "student dashboard"
+            return redirect('student_dashboard')
 
     return render_template("login.html")
+
 
 
 @app.route("/company_dashboard")
@@ -231,15 +232,21 @@ def company_dashboard():
     if "user_id" not in session:
         return redirect("/login")
 
-    company = CompanyProfile.query.filter_by(user_id=session["user_id"]).first()
+    user_id = session["user_id"]
 
-    jobs = Job.query.filter_by(company_id=company.id).all()
+    # Step 1: Get company profile of logged-in user
+    company = CompanyProfile.query.filter_by(user_id=user_id).first()
 
-    return render_template(
-        "company_dashboard.html",
-        company=company,
-        jobs=jobs
-    )
+    # Step 2: If no profile yet → no jobs
+    if not company:
+        jobs = []
+    else:
+        # Step 3: Fetch jobs using company_profile.id
+        jobs = Job.query.filter_by(company_id=company.id).all()
+
+    return render_template("company_dashboard.html",
+                           company=company,
+                           jobs=jobs)
 
     
 @app.route("/post-job", methods=["GET", "POST"])
@@ -364,12 +371,88 @@ def admin_dashboard():
 
 
 
+@app.route("/student_dashboard")
+def student_dashboard():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    user_id = session["user_id"]
+
+    student = StudentProfile.query.filter_by(user_id=user_id).first()
+
+    jobs = Job.query.filter_by(is_approved=True, is_closed=False).all()
+
+    applied_job_ids = []
+
+    if student:
+        applied_job_ids = [
+            app.job_id for app in student.applications
+        ]
+
+    return render_template(
+        "student_dashboard.html",
+        student=student,
+        jobs=jobs,
+        applied_job_ids=applied_job_ids
+    )
 
 
 
+@app.route("/apply-job/<int:job_id>")
+def apply_job(job_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    student = StudentProfile.query.filter_by(
+        user_id=session["user_id"]).first()
+
+    if not student:
+        return "Complete profile first!"
+
+    # Check duplicate apply
+    existing = Application.query.filter_by(
+        job_id=job_id,
+        student_id=student.id
+    ).first()
+
+    if existing:
+        return "Already applied!"
+
+    app = Application(
+        job_id=job_id,
+        student_id=student.id
+    )
+
+    db.session.add(app)
+    db.session.commit()
+
+    return redirect("/student_dashboard")
 
 
+@app.route("/complete-student-profile", methods=["GET", "POST"])
+def complete_student_profile():
+    if "user_id" not in session:
+        return redirect("/login")
 
+    user_id = session["user_id"]
+
+    student = StudentProfile.query.filter_by(user_id=user_id).first()
+
+    if request.method == "POST":
+
+        if not student:
+            student = StudentProfile(user_id=user_id)
+            db.session.add(student)
+
+        student.department = request.form["department"]
+        student.cgpa = request.form["cgpa"]
+        student.resume = request.form["resume"]
+
+        db.session.commit()
+
+        return redirect("/student_dashboard")
+
+    return render_template("complete_student_profile.html", student=student)
 
 
 
