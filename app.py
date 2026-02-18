@@ -182,12 +182,6 @@ def register():
 
         db.session.add(user)
         db.session.commit()
-
-
-
-       
-       
-
     return render_template("register.html")
 
 
@@ -212,7 +206,7 @@ def login():
         if user.role == "company" and not user.is_approved:
             return "u are not approved"
 
-
+    
 
         if user.role == "Admin":
             return redirect('admin_dashboard')
@@ -227,26 +221,131 @@ def login():
 
 
 
+
+
+
+
+
+
+
+
+
 @app.route("/company_dashboard")
 def company_dashboard():
     if "user_id" not in session:
         return redirect("/login")
 
-    user_id = session["user_id"]
+    company = CompanyProfile.query.filter_by(
+        user_id=session["user_id"]
+    ).first()
 
-    # Step 1: Get company profile of logged-in user
-    company = CompanyProfile.query.filter_by(user_id=user_id).first()
-
-    # Step 2: If no profile yet → no jobs
     if not company:
-        jobs = []
-    else:
-        # Step 3: Fetch jobs using company_profile.id
-        jobs = Job.query.filter_by(company_id=company.id).all()
+        return redirect("/complete-company-profile")
 
-    return render_template("company_dashboard.html",
-                           company=company,
-                           jobs=jobs)
+    jobs = Job.query.filter_by(company_id=company.id).all()
+
+    job_data = []
+    all_shortlisted = []   # ⭐ NEW LIST
+
+    for job in jobs:
+        total_apps = Application.query.filter_by(job_id=job.id).count()
+
+        shortlisted = Application.query.filter_by(
+            job_id=job.id,
+            status="Shortlisted"
+        ).all()
+
+        all_shortlisted.extend(shortlisted)  # ⭐ collect all
+
+        job_data.append({
+            "job": job,
+            "total_apps": total_apps
+        })
+
+    return render_template(
+        "company_dashboard.html",
+        company=company,
+        jobs=job_data,
+        shortlisted=all_shortlisted   # ⭐ PASS GLOBAL LIST
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+@app.route("/toggle-job/<int:id>")
+def toggle_job(id):
+    job = Job.query.get_or_404(id)
+
+    job.is_closed = not job.is_closed   # ✅ toggles True ↔ False
+
+    db.session.commit()
+    return redirect("/company_dashboard")
+
+
+
+@app.route("/toggle-status/<int:app_id>/<string:action>")
+def toggle_status(app_id, action):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    application = Application.query.get_or_404(app_id)
+
+    if action == "shortlist":
+        if application.status == "Shortlisted":
+            application.status = "Applied"   # unshortlist
+        else:
+            application.status = "Shortlisted"
+
+    elif action == "select":
+        if application.status == "Selected":
+            application.status = "Shortlisted"   # unselect
+        else:
+            application.status = "Selected"
+
+    elif action == "reject":
+        if application.status == "Rejected":
+            application.status = "Applied"   # unreject
+        else:
+            application.status = "Rejected"
+
+    db.session.commit()
+
+    return redirect(request.referrer)
+
+
+
+@app.route("/job-applications/<int:job_id>")
+def view_applications(job_id):
+    applications = Application.query.filter_by(job_id=job_id).all()
+
+    return render_template(
+        "applications.html",
+        applications=applications
+    )
+
+
+
+@app.route("/update-status/<int:app_id>/<status>")
+def update_status(app_id, status):
+    application = Application.query.get_or_404(app_id)
+
+    application.status = status
+
+    db.session.commit()
+
+    return redirect(request.referrer)
 
     
 @app.route("/post-job", methods=["GET", "POST"])
@@ -455,6 +554,26 @@ def complete_student_profile():
     return render_template("complete_student_profile.html", student=student)
 
 
+@app.route("/schedule-interview/<int:id>", methods=["GET","POST"])
+def schedule_interview(id):
+    app_obj = Application.query.get_or_404(id)
+
+    if request.method == "POST":
+        date = request.form["date"]
+        app_obj.interview_date = date
+        db.session.commit()
+        return redirect("/company-dashboard")
+
+    return render_template("schedule.html", app=app_obj)
+
+@app.route("/toggle-shortlist/<int:id>")
+def toggle_shortlist(id):
+    app_obj = Application.query.get_or_404(id)
+
+    app_obj.is_shortlisted = not app_obj.is_shortlisted
+    db.session.commit()
+
+    return redirect(request.referrer)
 
 # =====================
 # RUN

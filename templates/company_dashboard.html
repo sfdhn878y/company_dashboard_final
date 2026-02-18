@@ -17,7 +17,6 @@ body {
     color: #e2e8f0;
 }
 
-/* NAVBAR */
 .navbar {
     background: rgba(255,255,255,0.05);
     border-bottom: 1px solid #1e293b;
@@ -33,14 +32,12 @@ body {
     margin: 0;
 }
 
-/* CONTAINER */
 .container {
     padding: 50px;
     max-width: 900px;
     margin: auto;
 }
 
-/* CARD STYLE */
 .card {
     width: 100%;
     background: rgba(255,255,255,0.05);
@@ -54,16 +51,13 @@ body {
 
 .card h3 {
     color: #38bdf8;
-    margin-bottom: 20px;
 }
 
-/* TEXT */
 .card p {
     margin: 10px 0;
     color: #cbd5e1;
 }
 
-/* BUTTONS */
 .btn {
     padding: 10px 16px;
     border: none;
@@ -94,21 +88,19 @@ body {
     transform: scale(1.05);
 }
 
+.section-title {
+    color: #38bdf8;
+}
+
 .incomplete {
     color: #ef4444;
     font-weight: bold;
-}
-
-.section-title {
-    color: #38bdf8;
-    margin-bottom: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <div class="navbar">
     <h2>Company Dashboard</h2>
     <a href="/logout">
@@ -118,67 +110,132 @@ body {
 
 <div class="container">
 
-    <!-- COMPANY PROFILE -->
-    <div class="card">
-        <h3>Company Profile</h3>
+<!-- COMPANY PROFILE -->
+<div class="card">
+    <h3>Company Profile</h3>
 
-        {% if company.company_name %}
-            <p><b>Name:</b> {{ company.company_name }}</p>
-            <p><b>Industry:</b> {{ company.industry }}</p>
-            <p><b>Website:</b> {{ company.website }}</p>
-            <p><b>Location:</b> {{ company.location }}</p>
-            <p><b>Size:</b> {{ company.company_size }}</p>
-            <p><b>Description:</b> {{ company.description }}</p>
-        {% else %}
-            <p class="incomplete">⚠ Profile Incomplete</p>
-        {% endif %}
+    {% if company and company.company_name %}
+        <p><b>Name:</b> {{ company.company_name }}</p>
+        <p><b>Industry:</b> {{ company.industry }}</p>
+        <p><b>Website:</b> {{ company.website }}</p>
+        <p><b>Location:</b> {{ company.location }}</p>
+        <p><b>Size:</b> {{ company.company_size }}</p>
+        <p><b>Description:</b> {{ company.description }}</p>
+    {% else %}
+        <p class="incomplete">⚠ Profile Incomplete</p>
+    {% endif %}
 
-        <br>
+    <br>
 
-        <a href="/complete-company-profile">
-            <button class="btn complete">Complete / Edit Profile</button>
+    <a href="/complete-company-profile">
+        <button class="btn complete">Complete / Edit Profile</button>
+    </a>
+</div>
+<hr>
+<h4 style="color:#38bdf8;">Shortlisted Students</h4>
+
+
+{% if shortlisted %}
+    {% for app in shortlisted %}
+
+    <div class="card" style="background:#020617; border:1px solid #334155;">
+
+        <p><b>Name:</b> {{ app.student.user.name }}</p>
+        <p><b>Email:</b> {{ app.student.user.email }}</p>
+
+        <a href="/toggle-status/{{ app.id }}/Applied">
+            <button class="btn logout">Remove from Shortlist</button>
         </a>
+
     </div>
 
-
-    <!-- JOB POSTS -->
-    <h2 class="section-title">Your Job Posts</h2>
-
-    <a href="/post-job">
-        <button class="btn complete">Post New Job</button>
-    </a>
-
-    <br><br>
-
-    {% for job in jobs %}
-        <div class="card">
-            <p><b>Title:</b> {{ job.title }}</p>
-            <p><b>Skills:</b> {{ job.skills }}</p>
-            <p><b>Experience:</b> {{ job.experience }}</p>
-            <p><b>Salary:</b> {{ job.salary }}</p>
-            
-            <p>
-                <b>Status:</b> 
-                {% if job.is_approved == 0 %}
-                    <span style="color: orange;">Pending to be approved by admin</span>
-                {% else %}
-                    <span style="color: lightgreen;">Approved</span>
-                {% endif %}
-            </p>
-
-            <br>
-
-            <!-- EDIT BUTTON -->
-            <a href="/edit-job/{{ job.id }}">
-                <button class="btn complete">Edit</button>
-            </a>
-
-            <!-- DELETE BUTTON -->
-            <a href="/delete-job/{{ job.id }}">
-                <button class="btn logout">Delete</button>
-            </a>
-        </div>
     {% endfor %}
+{% else %}
+    <p style="color:#94a3b8;">No shortlisted students yet.</p>
+{% endif %}
+
+
+<!-- JOB POSTS -->
+<h2 class="section-title">Your Job Posts</h2>
+
+<a href="/post-job">
+    <button class="btn complete">Post New Job</button>
+</a>
+
+<br><br>
+
+
+{% if jobs %}
+    {% for item in jobs %}
+    {% set job = item.job %}
+
+    <div class="card">
+        <p><b>Title:</b> {{ job.title }}</p>
+        <p><b>Skills:</b> {{ job.skills }}</p>
+        <p><b>Experience:</b> {{ job.experience }}</p>
+        <p><b>Salary:</b> {{ job.salary }}</p>
+
+        <p>
+            <b>Total Applications:</b>
+            <span style="color:#38bdf8; font-weight:bold;">
+                {{ item.total_apps }}
+            </span>
+        </p>
+
+        <p>
+            <b>Admin Approval:</b>
+            {% if job.is_approved == 0 %}
+                <span style="color: orange;">Pending</span>
+            {% else %}
+                <span style="color: lightgreen;">Approved</span>
+            {% endif %}
+        </p>
+
+        <p>
+            <b>Job Status:</b>
+
+            {% if job.is_closed %}
+                <span style="color: red;">Closed</span>
+            {% else %}
+                <span style="color: lightgreen;">Active</span>
+            {% endif %}
+
+        </p>
+                <br>
+
+        <!-- VIEW APPLICANTS -->
+        <a href="/job-applications/{{ job.id }}">
+            <button class="btn complete">View Applicants</button>
+        </a>
+
+        <!-- TOGGLE STATUS -->
+        <a href="/toggle-job/{{ job.id }}">
+            <button class="btn logout">
+                {% if job.job_status == "Active" %}
+                    Close Job
+                {% else %}
+                    Activate Job
+                {% endif %}
+            </button>
+        </a>
+
+        <br><br>
+
+        <!-- EDIT -->
+        <a href="/edit-job/{{ job.id }}">
+            <button class="btn complete">Edit</button>
+        </a>
+
+        <!-- DELETE -->
+        <form action="/delete-job/{{ job.id }}" method="POST" style="display:inline;">
+            <button class="btn logout">Delete</button>
+        </form>
+    </div>
+
+    {% endfor %}
+{% else %}
+    <p style="color:#94a3b8;">No jobs posted yet.</p>
+{% endif %}
 
 </div>
 

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Job Applicants</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(120deg, #020617, #0f172a);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid #1e293b;
+            padding: 18px 40px;
+        }
+
+        .navbar h2 {
+            margin: 0;
+            color: #38bdf8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card p {
+            margin: 8px 0;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 8px;
+            transition: 0.3s;
+        }
+
+        .shortlist {
+            background: #facc15;
+        }
+
+        .select {
+            background: #22c55e;
+            color: white;
+        }
+
+        .reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .status {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <h2>Applicants</h2>
+    </div>
+
+    <div class="container">
+
+        {% if applications %}
+
+        {% for app in applications %}
+<div class="card">
+
+    <p><b>Student ID:</b> {{ app.student_id }}</p>
+
+    <p>
+        <b>Status:</b>
+        <span class="status">
+            {% if app.status == "Applied" %}
+            <span style="color: #38bdf8;">Applied</span>
+            {% elif app.status == "Shortlisted" %}
+            <span style="color: #facc15;">Shortlisted</span>
+            {% elif app.status == "Selected" %}
+            <span style="color: #22c55e;">Selected</span>
+            {% else %}
+            <span style="color: #ef4444;">Rejected</span>
+            {% endif %}
+        </span>
+    </p>
+
+    <p>
+        <b>Applied On:</b>
+        {{ app.applied_at.strftime("%d %b %Y") }}
+    </p>
+
+    <br>
+
+    <!-- SHORTLIST -->
+    <a href="/toggle-status/{{ app.id }}/shortlist">
+        <button class="btn shortlist">
+            {% if app.status == "Shortlisted" %}
+                🔁 Unshortlist
+            {% else %}
+                ⭐ Shortlist
+            {% endif %}
+        </button>
+    </a>
+
+    <!-- SELECT -->
+    <a href="/toggle-status/{{ app.id }}/select">
+        <button class="btn select">
+            {% if app.status == "Selected" %}
+                🔁 Unselect
+            {% else %}
+                ✅ Select
+            {% endif %}
+        </button>
+    </a>
+
+    <!-- REJECT -->
+    <a href="/toggle-status/{{ app.id }}/reject">
+        <button class="btn reject">
+            {% if app.status == "Rejected" %}
+                🔁 Unreject
+            {% else %}
+                ❌ Reject
+            {% endif %}
+        </button>
+    </a>
+
+</div>
+
+        {% endfor %}
+
+        {% else %}
+        <p style="color:#94a3b8;">No applications received yet.</p>
+        {% endif %}
+
+        <br>
+
+        <a href="/company_dashboard">
+            <button class="btn select">← Back to Dashboard</button>
+        </a>
+
+    </div>
+
+</body>
+
+</html>
