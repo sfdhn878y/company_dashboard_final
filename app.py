@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,session,redirect
+from flask import Flask,render_template,request,session,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -443,20 +443,33 @@ def complete_company_profile():
 @app.route("/admin_dashboard")
 def admin_dashboard():
 
-    # Registered Companies (approved ones)
-    companies = User.query.filter_by(role="company", is_approved=True).all()
+    # Approved Companies
+    companies = User.query.filter_by(
+        role="company",
+        is_approved=True
+    ).all()
 
+    # All Students
+    students = User.query.filter_by(
+        role="student"
+    ).all()
 
-    # Registered Students
-    students = User.query.filter_by(role="student").all()
+    # Pending Companies
+    pending_companies = User.query.filter_by(
+        role="company",
+        is_approved=False
+    ).all()
 
-    # Pending Companies (not approved yet)
-    pending_companies = User.query.filter_by(role="company", is_approved=False).all()
+    # 🔁 All Jobs (important change)
+    jobs = Job.query.all()
 
-    # Ongoing Drives (approved + not closed jobs)
-    jobs = Job.query.filter_by(is_approved=True, is_closed=False).all()
+    # Only Approved + Active Jobs (for ongoing section)
+    ongoing_jobs = Job.query.filter_by(
+        is_approved=True,
+        is_closed=False
+    ).all()
 
-    # Student Applications
+    # All Applications
     applications = Application.query.all()
 
     return render_template(
@@ -464,10 +477,39 @@ def admin_dashboard():
         companies=companies,
         students=students,
         pending_companies=pending_companies,
-        jobs=jobs,
+        jobs=jobs,                  # used for approve/disapprove section
+        ongoing_jobs=ongoing_jobs,  # used for ongoing drives section
         applications=applications
     )
 
+# approve job
+@app.route("/approve-job/<int:id>")
+def approve_job(id):
+    job = Job.query.get(id)
+    if job:
+        job.is_approved = True
+        db.session.commit()
+    return redirect("/admin_dashboard")
+
+# reject job (you can delete or just mark rejected)
+@app.route("/disapprove-job/<int:id>")
+def disapprove_job(id):
+    job = Job.query.get(id)
+
+    if job:
+
+        # check if any application exists for this job
+        application_count = Application.query.filter_by(job_id=id).count()
+
+        # if students already applied → do NOT allow disapprove
+        if application_count > 0:
+            return "Cannot disapprove. Students already applied to this job."
+
+        # if no applications → allow disapprove
+        job.is_approved = False
+        db.session.commit()
+
+    return redirect("/admin_dashboard")
 
 
 @app.route("/student_dashboard")
@@ -574,6 +616,21 @@ def toggle_shortlist(id):
     db.session.commit()
 
     return redirect(request.referrer)
+
+#--------------------------------------------
+@app.route('/logout')
+
+def logout():
+    session.clear()  # clears the session for the user
+    return redirect(url_for('login'))  # redirect to login page
+
+
+
+
+
+
+
+
 
 # =====================
 # RUN

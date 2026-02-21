@@ -1,86 +1,83 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
+{% block content %}
 
-<head>
-    <title>Admin Dashboard</title>
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", Arial;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: "Segoe UI", Arial;
-        }
+    body {
+        margin: 0;
+        background: linear-gradient(120deg, #020617, #0f172a);
+        color: #e2e8f0;
+        padding: 40px;
+    }
 
-        body {
-            margin: 0;
-            background: linear-gradient(120deg, #020617, #0f172a);
-            color: #e2e8f0;
-            padding: 40px;
-        }
+    .container {
+        width: 95%;
+        margin: auto;
+    }
 
-        .container {
-            width: 95%;
-            margin: auto;
-        }
+    h1 {
+        text-align: center;
+        color: #38bdf8;
+    }
 
-        h1 {
-            text-align: center;
-            color: #38bdf8;
-        }
+    .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 25px;
+        backdrop-filter: blur(10px);
+    }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 25px;
-            backdrop-filter: blur(10px);
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+    th,
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #1e293b;
+    }
 
-        th,
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #1e293b;
-        }
+    th {
+        color: #38bdf8;
+        text-align: left;
+    }
 
-        th {
-            color: #38bdf8;
-            text-align: left;
-        }
+    button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-        button {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+    .approve {
+        background: #22c55e;
+        color: black;
+    }
 
-        .approve {
-            background: #22c55e;
-            color: black;
-        }
+    .reject {
+        background: #ef4444;
+        color: white;
+    }
 
-        .reject {
-            background: #ef4444;
-            color: white;
-        }
+    .view {
+        background: #38bdf8;
+        color: black;
+    }
 
-        .view {
-            background: #38bdf8;
-            color: black;
-        }
-
-        .complete {
-            background: #facc15;
-            color: black;
-        }
-    </style>
+    .complete {
+        background: #facc15;
+        color: black;
+    }
+</style>
 </head>
 
 <body>
@@ -146,34 +143,78 @@
                     <th>Action</th>
                 </tr>
 
-               
-            {% for p in pending_companies %}
-            <tr>
 
-                <td>
-                    {% if p.company_profile %}
+                {% for p in pending_companies %}
+                <tr>
+
+                    <td>
+                        {% if p.company_profile %}
                         {{ p.company_profile.company_name }}
-                    {% else %}
+                        {% else %}
                         <span style="color:#f87171;">
                             Profile not created by company till yet
                         </span>
-                    {% endif %}
-                </td>
+                        {% endif %}
+                    </td>
 
-                <td>
-                    <a href="/approve-company/{{ p.id }}">
-                        <button class="approve">Approve</button>
-                    </a>
-                </td>
+                    <td>
+                        <a href="/approve-company/{{ p.id }}">
+                            <button class="approve">Approve</button>
+                        </a>
+                    </td>
 
-            </tr>
-            {% endfor %}
+                </tr>
+                {% endfor %}
 
             </table>
         </div>
+        <!-- Pending Job Approvals -->
+        <!-- Job Management -->
+        <div class="card">
+            <h3>All Job Requests</h3>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Job Title</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
 
+                {% for j in jobs %}
+                <tr>
+                    <td>{{ j.id }}</td>
+                    <td>{{ j.title }}</td>
 
-        <!-- Ongoing Drives -->
+                    <td>
+                        {% if j.is_approved %}
+                        <span style="color:#22c55e;">Approved</span>
+                        {% else %}
+                        <span style="color:#facc15;">Pending</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if j.is_approved %}
+
+                        {% if j.applications|length == 0 %}
+                        <a href="/disapprove-job/{{ j.id }}">
+                            <button class="reject">Disapprove</button>
+                        </a>
+                        {% else %}
+                        <span style="color:#f87171;">Has Applications</span>
+                        {% endif %}
+
+                        {% else %}
+                        <a href="/approve-job/{{ j.id }}">
+                            <button class="approve">Approve</button>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </table>
+        </div> <!-- Ongoing Drives -->
         <div class="card">
             <h3>Ongoing Drives</h3>
             <table>
@@ -233,6 +274,4 @@
         </div>
 
     </div>
-</body>
-
-</html>
+    {% endblock %}
