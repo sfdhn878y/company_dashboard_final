@@ -84,6 +84,12 @@
 
     <div class="container">
 
+        <div style="margin-bottom:10px;">
+            <form method="GET">
+                <input type="text" name="company_search" placeholder="Search company...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
         <h1>Admin Dashboard</h1>
 
         <!-- Registered Companies -->
@@ -112,6 +118,13 @@
 
         <!-- Registered Students -->
         <div class="card">
+            <div style="margin-bottom:10px;">
+                <form method="GET">
+                    <input type="text" name="student_search" placeholder="Search student..."
+                        value="{{ request.args.get('student_search','') }}">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
             <h3>Registered Students</h3>
             <table>
                 <tr>
@@ -233,7 +246,7 @@
                             <button class="view">View Details</button>
                         </a>
 
-                       
+
                     </td>
                 </tr>
                 {% endfor %}

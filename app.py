@@ -1,6 +1,7 @@
 from flask import Flask,render_template,request,session,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy import or_
 
 app = Flask(__name__)
 
@@ -440,48 +441,73 @@ def complete_company_profile():
     return render_template("complete_company_profile.html", company=company)
 
 
+from sqlalchemy import or_
+from sqlalchemy.orm import joinedload
+
 @app.route("/admin_dashboard")
 def admin_dashboard():
 
-    # Approved Companies
-    companies = User.query.filter_by(
-        role="company",
-        is_approved=True
-    ).all()
+    student_search = request.args.get("student_search", "")
+    company_search = request.args.get("company_search", "")
 
-    # All Students
-    students = User.query.filter_by(
-        role="student"
-    ).all()
+    # Companies
+    companies = User.query.options(
+        joinedload(User.company_profile)
+    ).filter_by(role="company", is_approved=True)
+
+    if company_search:
+        companies = companies.filter(
+            User.company_profile.has(
+                or_(
+                    CompanyProfile.company_name.ilike(f"%{company_search}%"),
+                    CompanyProfile.industry.ilike(f"%{company_search}%")
+                )
+            )
+        )
+
+    companies = companies.all()
+
+    # Students
+    students = User.query.filter_by(role="student", is_approved=True)
+
+    if student_search:
+        students = students.filter(
+            or_(
+                User.name.ilike(f"%{student_search}%"),
+                User.email.ilike(f"%{student_search}%")
+            )
+        )
+
+    students = students.all()
 
     # Pending Companies
-    pending_companies = User.query.filter_by(
-        role="company",
-        is_approved=False
-    ).all()
+    pending_companies = User.query.options(
+        joinedload(User.company_profile)
+    ).filter_by(role="company", is_approved=False).all()
 
-    # 🔁 All Jobs (important change)
+    # Jobs
     jobs = Job.query.all()
 
-    # Only Approved + Active Jobs (for ongoing section)
     ongoing_jobs = Job.query.filter_by(
         is_approved=True,
         is_closed=False
     ).all()
 
-    # All Applications
-    applications = Application.query.all()
+    # Applications
+    applications = Application.query.options(
+        joinedload(Application.student).joinedload(StudentProfile.user),
+        joinedload(Application.job)
+    ).all()
 
     return render_template(
         "admin_dashboard.html",
         companies=companies,
         students=students,
         pending_companies=pending_companies,
-        jobs=jobs,                  # used for approve/disapprove section
-        ongoing_jobs=ongoing_jobs,  # used for ongoing drives section
+        jobs=jobs,
+        ongoing_jobs=ongoing_jobs,
         applications=applications
     )
-
 # approve job
 @app.route("/approve-job/<int:id>")
 def approve_job(id):
