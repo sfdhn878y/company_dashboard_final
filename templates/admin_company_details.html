@@ -1,0 +1,65 @@
+<h1>Company Details</h1>
+
+<div class="card">
+    <h3>Basic Info</h3>
+
+    <p><b>Name:</b> {{ company_profile.company_name }}</p>
+    <p><b>Email:</b> {{ company_user.email }}</p>
+    <p><b>Industry:</b> {{ company_profile.industry }}</p>
+    <p><b>Location:</b> {{ company_profile.location }}</p>
+    <p><b>Website:</b> {{ company_profile.website }}</p>
+    <p><b>Size:</b> {{ company_profile.company_size }}</p>
+    <p><b>Description:</b> {{ company_profile.description }}</p>
+</div>
+
+<hr>
+
+<div class="card">
+    <h3>All Jobs Posted</h3>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Status</th>
+        </tr>
+
+        {% for j in jobs %}
+        <tr>
+            <td>{{ j.id }}</td>
+            <td>{{ j.title }}</td>
+            <td>
+                {% if j.is_closed %}
+                    Closed
+                {% elif j.is_approved %}
+                    Active
+                {% else %}
+                    Pending Approval
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<hr>
+
+<div class="card">
+    <h3>Student Applications</h3>
+
+    <table>
+        <tr>
+            <th>Student</th>
+            <th>Job</th>
+            <th>Status</th>
+        </tr>
+
+        {% for a in applications %}
+        <tr>
+            <td>{{ a.student.user.name }}</td>
+            <td>{{ a.job.title }}</td>
+            <td>{{ a.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

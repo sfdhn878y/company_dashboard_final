@@ -105,6 +105,10 @@
                 <tr>
                     <td>{{ c.company_profile.company_name }}</td>
                     <td>
+                        <a href="/admin-company/{{ c.id }}">
+                            <button class="view">View</button>
+                        </a>
+
                         <a href="/blacklist/{{ c.id }}">
                             <button class="reject">Blacklist</button>
                         </a>

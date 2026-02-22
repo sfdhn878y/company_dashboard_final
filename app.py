@@ -666,8 +666,50 @@ def toggle_shortlist(id):
     return redirect(request.referrer)
 
 #--------------------------------------------
-@app.route('/logout')
 
+@app.route("/admin-company/<int:user_id>")
+def admin_company_details(user_id):
+
+    # Get company user
+    company_user = User.query.filter_by(
+        id=user_id,
+        role="company"
+    ).first_or_404()
+
+    company_profile = company_user.company_profile
+
+    # Get all jobs posted by company
+    jobs = Job.query.filter_by(
+        company_id=company_profile.id
+    ).all()
+
+    # Get applications for all jobs
+    applications = Application.query.join(Job).filter(
+        Job.company_id == company_profile.id
+    ).all()
+
+    return render_template(
+        "admin_company_details.html",
+        company_user=company_user,
+        company_profile=company_profile,
+        jobs=jobs,
+        applications=applications
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/logout')
 def logout():
     session.clear()  # clears the session for the user
     return redirect(url_for('login'))  # redirect to login page
