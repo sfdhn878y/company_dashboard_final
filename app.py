@@ -512,6 +512,28 @@ def disapprove_job(id):
     return redirect("/admin_dashboard")
 
 
+
+
+
+@app.route("/admin-job/<int:job_id>")
+def admin_job_details(job_id):
+
+    job = Job.query.get_or_404(job_id)
+
+    # get company info
+    company = job.company   # make sure relationship exists
+
+    # get all applications for this job
+    applications = Application.query.filter_by(job_id=job_id).all()
+
+    return render_template(
+        "admin_job_details.html",
+        job=job,
+        company=company,
+        applications=applications
+    )
+
+#-----------------------------------------------------------------
 @app.route("/student_dashboard")
 def student_dashboard():
     if "user_id" not in session:

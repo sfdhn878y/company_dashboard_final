@@ -229,13 +229,11 @@
                     <td>{{ j.id }}</td>
                     <td>{{ j.title }}</td>
                     <td>
-                        <a href="/job/{{ j.id }}">
+                        <a href="/admin-job/{{ j.id }}">
                             <button class="view">View Details</button>
                         </a>
 
-                        <a href="/complete-job/{{ j.id }}">
-                            <button class="complete">Mark Complete</button>
-                        </a>
+                       
                     </td>
                 </tr>
                 {% endfor %}
