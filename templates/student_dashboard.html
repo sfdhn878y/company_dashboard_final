@@ -1,45 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <title>Student Dashboard</title>
+<title>Student Dashboard</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            background: linear-gradient(120deg, #020617, #0f172a);
-            color: white;
-        }
+<style>
+    body {
+        font-family: Arial;
+        background: linear-gradient(120deg, #020617, #0f172a);
+        color: white;
+    }
 
-        .container {
-            width: 800px;
-            margin: 50px auto;
-        }
+    .container {
+        width: 800px;
+        margin: 50px auto;
+    }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
+    .card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
 
-        .btn {
-            padding: 10px 15px;
-            background: #38bdf8;
-            border: none;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .btn {
+        padding: 10px 15px;
+        background: #38bdf8;
+        border: none;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .incomplete {
-            color: orange;
-        }
+    .incomplete {
+        color: orange;
+    }
 
-        .apply {
-            background: #22c55e;
-            color: black;
-        }
-    </style>
+    .apply {
+        background: #22c55e;
+        color: black;
+    }
+</style>
 </head>
 
 <body>
@@ -67,28 +67,31 @@
 
         <!-- JOBS SECTION -->
         <h2>Available Jobs</h2>
-{% for job in jobs %}
-<div class="card">
+        {% for job in jobs %}
+        <div class="card">
 
-    <p><b>Company:</b> {{ job.company.company_name }}</p>
-    <p><b>Title:</b> {{ job.title }}</p>
-    <p><b>Skills:</b> {{ job.skills }}</p>
-    <p><b>Salary:</b> {{ job.salary }}</p>
+            <p><b>Company:</b> {{ job.company.company_name }}</p>
+            <p><b>Title:</b> {{ job.title }}</p>
+            <p><b>Skills:</b> {{ job.skills }}</p>
+            <p><b>Salary:</b> {{ job.salary }}</p>
 
-    {% if job.id in applied_job_ids %}
-        <button class="btn" style="background: gray; cursor: not-allowed;">
-            Applied ✓
-        </button>
-    {% else %}
-        <a href="/apply-job/{{ job.id }}">
-            <button class="btn apply">Apply Job</button>
-        </a>
-    {% endif %}
+            {% if job.id in application_status %}
 
-</div>
-{% endfor %}
+            {% set status = application_status[job.id] %}
 
+            <button class="btn" style="background: gray; cursor: not-allowed;">
+                {{ status }}
+            </button>
+
+            {% else %}
+            <a href="/apply-job/{{ job.id }}">
+                <button class="btn apply">Apply Job</button>
+            </a>
+            {% endif %}
+
+        </div>
+        {% endfor %}
 
     </div>
 
-{% endblock %}
+    {% endblock %}

@@ -404,7 +404,7 @@ def edit_job(id):
 @app.route("/complete-company-profile", methods=["GET", "POST"])
 def complete_company_profile():
 
-    user_id = session.get("user_id")
+    user_id = session.get("user_id")  #2
 
     if not user_id:
         return redirect("/login")
@@ -560,32 +560,33 @@ def admin_job_details(job_id):
     )
 
 #-----------------------------------------------------------------
+
 @app.route("/student_dashboard")
 def student_dashboard():
+
+    # 🔒 Check login
     if "user_id" not in session:
-        return redirect("/login")
+        return redirect(url_for("login"))
 
     user_id = session["user_id"]
 
     student = StudentProfile.query.filter_by(user_id=user_id).first()
 
+    # Get approved + open jobs
     jobs = Job.query.filter_by(is_approved=True, is_closed=False).all()
 
-    applied_job_ids = []
+    # Get student applications
+    applications = Application.query.filter_by(student_id=student.id).all()
 
-    if student:
-        applied_job_ids = [
-            app.job_id for app in student.applications
-        ]
+    # Create mapping {job_id : status}
+    application_status = {app.job_id: app.status for app in applications}
 
     return render_template(
         "student_dashboard.html",
         student=student,
         jobs=jobs,
-        applied_job_ids=applied_job_ids
+        application_status=application_status
     )
-
-
 
 @app.route("/apply-job/<int:job_id>")
 def apply_job(job_id):

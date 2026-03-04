@@ -1,4 +1,6 @@
-#!/home/shubham/Desktop/2ndmilestone/2nd-milestone-main/venv/bin/python3
+#!/bin/sh
+'''exec' "/home/shubham/Desktop/all folders/2ndmilestone/2nd-milestone-main/venv/bin/python3" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys

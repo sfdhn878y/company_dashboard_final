@@ -205,20 +205,11 @@ body {
 
         <!-- VIEW APPLICANTS -->
         <a href="/job-applications/{{ job.id }}">
-            <button class="btn complete">View Applicants</button>
+            <button class="btn complete">View Applicants</butto n>
         </a>
 
         <!-- TOGGLE STATUS -->
-        <a href="/toggle-job/{{ job.id }}">
-            <button class="btn logout">
-                {% if job.job_status == "Active" %}
-                    Close Job
-                {% else %}
-                    Activate Job
-                {% endif %}
-            </button>
-        </a>
-
+     
         <br><br>
 
         <!-- EDIT -->
